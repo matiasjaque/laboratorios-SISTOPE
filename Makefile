@@ -1,7 +1,7 @@
 CC= gcc
-CFLAGS= -Wall -lm -lniceprint
+CFLAGS= -Wall -lm 
 out = lab1
-source = test.c Funciones.c
+source = lab1.c Funciones.c
 objects = $(source:.c=.o)
 depends = .depends
 headers = Funciones.h
