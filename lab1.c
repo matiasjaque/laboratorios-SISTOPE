@@ -31,21 +31,17 @@ int main (int argc, char **argv) {
 
   int numero_celdas = 0;
   char nombre_archivo[100];
-  printf("argc: %d \n", argc);
   int c;
   opterr = 0;
-  printf("hola\n");
 
   //el siguiente ciclo se utiliza para recibir los parametros de entrada usando getopt
   while ((c = getopt (argc, argv, "N:i:D")) != -1){
-      printf("hola2\n");
       switch (c)
 
       {
         case 'N':
 
           sscanf(optarg, "%d", &numero_celdas);
-          printf("numero celdas: %d \n", numero_celdas);
           //Se crea un arreglo de tamaño la cantidad de celdas
           float * celdas = (float *)malloc(sizeof(float)*numero_celdas);
           //Se vacia el arreglo
@@ -58,15 +54,12 @@ int main (int argc, char **argv) {
         case 'i':
 
           sscanf(optarg, "%s", nombre_archivo);  
-          printf("nombre del archivo: %s \n", nombre_archivo);
           //Se abre el archivo
           FILE *archivo;
           archivo = fopen(nombre_archivo, "r");
-          printf("Archivo abierto");
           //Se lee la cantidad de particulas
           int cantidad_particulas = 0;
           fscanf(archivo, "%d", &cantidad_particulas);
-          printf("cantidad particulas: %d\n", cantidad_particulas);
           //Se crea una matriz de tamaño 2xcantidad de particulas
           int ** particulas = (int**) malloc(sizeof(int)* 2);
           particulas[0] = (int*)malloc(sizeof(int)*cantidad_particulas);
@@ -75,15 +68,15 @@ int main (int argc, char **argv) {
           for (int i = 0; i < cantidad_particulas; i++)
           {
             fscanf(archivo, "%d %d", &particulas[0][i], &particulas[1][i]);
-            printf("Posicion: %d, Energia: %d \n",particulas[0][i], particulas[1][i]);
+
           }
+          fclose(archivo);
           // Calcular los impactos 
           calcular_impactos(celdas,particulas,numero_celdas,cantidad_particulas);
-          //Imprimir resultados (Prueba)
-         /* for (int i = 0; i < numero_celdas; i++)
-          {
-            printf("celda: %d -- energia: %f \n", i, celdas[i]);
-          }*/
+          //Liberar memoria del arreglo de particulas 
+          free(particulas[0]);
+          free(particulas[1]);
+          free(particulas);
           //Encontrar el mayor 
           float max = 0;
           int pos_max = -1;
@@ -95,7 +88,6 @@ int main (int argc, char **argv) {
               pos_max = i;
             }
           }
-          //printf("%d %f \n", pos_max,max);
           //Generar el archivo de salida
           FILE * archivo_salida;
           archivo_salida = fopen ("output.txt", "w");
@@ -110,20 +102,16 @@ int main (int argc, char **argv) {
             fprintf(archivo_salida, "%d %f\n", i, celdas[i]);
             }        
           }
+          fclose(archivo_salida);
           
           break; 
         case 'D':
-          printf("Hay D\n");
           niceprint(numero_celdas, celdas, max);
-          /* for (int i = 0; i < numero_celdas; i++)
-          {
-
-            //printf("celda: %d -- energia: %f \n", i, celdas[i]);
-          } */
+          free(celdas);
           break;
         case '?':
 
-          if (optopt == 'c'){
+          if (optopt == 'N'){
             fprintf (stderr, "Opcion -%c requiere un argumento.\n", optopt);
           }
           
@@ -143,27 +131,13 @@ int main (int argc, char **argv) {
   }
   
   //-----------------------------------------------------------------------------------------------------------------
-
-    /* int N=10;
-    float* Energy = (float*)malloc(sizeof(float)*N);
-    srand((unsigned int)time(NULL));
-    for(int i = 0; i<N; i++){
-      if (i == 0)
-      {
-        Energy[i] = 10.0000;
-      }
-      
-      else{
-        Energy[i] = (float)rand()/(float)RAND_MAX;
-      }
-    }
-    niceprint(N,Energy, max); */
     
+
 
     time (&end);
 
     double dif = difftime (end,start);
-    printf ("El tiempo de ejecucion es %.2lf segundos.", dif );
+    printf ("El tiempo de ejecucion es %.2lf segundos.\n", dif );
 
     return 0;
 }
