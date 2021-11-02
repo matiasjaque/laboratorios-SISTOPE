@@ -1,5 +1,5 @@
 CC= gcc
-CFLAGS= -Wall -lm 
+CFLAGS= -Wall -lm -lniceprint -L .
 out = lab1
 source = lab1.c Funciones.c
 objects = $(source:.c=.o)
@@ -8,7 +8,7 @@ headers = Funciones.h
 
 $(build): $(out)
 $(out): $(objects)
-	$(CC) -o $@ $^ $(CFLAGS) -L .
+	$(CC) -o $@ $^ $(CFLAGS)
 
 $(objects): 
 	$(CC) -c $*.c

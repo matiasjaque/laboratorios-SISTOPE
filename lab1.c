@@ -9,6 +9,10 @@
 #include <math.h>
 
 
+void extern niceprint(int N, float*Energy);
+
+
+
 //Entradas: Recibe un argumento de tipo int que indica la cantidad de argumentos que se introduciran
 //          por linea de comandos y recibe un arreglo doble de tipo char que almacenara los argumentos
 //          que se introduciran por linea de comandos
@@ -30,12 +34,13 @@ int main (int argc, char **argv) {
   printf("argc: %d \n", argc);
   int c;
   opterr = 0;
-  printf("hola \n");
+  printf("hola\n");
 
   //el siguiente ciclo se utiliza para recibir los parametros de entrada usando getopt
-  while ((c = getopt (argc, argv, "N:i:")) != -1){
-      printf("hola \n");
+  while ((c = getopt (argc, argv, "N:i:D")) != -1){
+      printf("hola2\n");
       switch (c)
+
       {
         case 'N':
 
@@ -57,6 +62,7 @@ int main (int argc, char **argv) {
           //Se abre el archivo
           FILE *archivo;
           archivo = fopen(nombre_archivo, "r");
+          printf("Archivo abierto");
           //Se lee la cantidad de particulas
           int cantidad_particulas = 0;
           fscanf(archivo, "%d", &cantidad_particulas);
@@ -71,11 +77,14 @@ int main (int argc, char **argv) {
             fscanf(archivo, "%d %d", &particulas[0][i], &particulas[1][i]);
             printf("Posicion: %d, Energia: %d \n",particulas[0][i], particulas[1][i]);
           }
+          // Calcular los impactos 
           calcular_impactos(celdas,particulas,numero_celdas,cantidad_particulas);
-          for (int i = 0; i < numero_celdas; i++)
+          //Imprimir resultados (Prueba)
+         /* for (int i = 0; i < numero_celdas; i++)
           {
             printf("celda: %d -- energia: %f \n", i, celdas[i]);
-          }
+          }*/
+          //Encontrar el mayor 
           float max = 0;
           int pos_max = -1;
           for (int i = 0; i < numero_celdas; i++)
@@ -86,7 +95,8 @@ int main (int argc, char **argv) {
               pos_max = i;
             }
           }
-          printf("%d %f \n", pos_max,max);
+          //printf("%d %f \n", pos_max,max);
+          //Generar el archivo de salida
           FILE * archivo_salida;
           archivo_salida = fopen ("output.txt", "w");
           for (int i = -1; i < numero_celdas; i++)
@@ -102,9 +112,14 @@ int main (int argc, char **argv) {
           }
           
           break; 
-        /*case 'o':
-          //cvalue = optarg;
-          break;*/
+        case 'D':
+          printf("Hay D\n");
+          
+          for (int i = 0; i < numero_celdas; i++)
+          {
+            printf("celda: %d -- energia: %f \n", i, celdas[i]);
+          }
+          break;
         case '?':
 
           if (optopt == 'c'){
@@ -123,22 +138,26 @@ int main (int argc, char **argv) {
         printf("salida");
           abort ();
       }
+
   }
-    /*printf ("avalue = %i, bvalue = %i, cvalue = %s\n",
-            avalue, bvalue, cvalue);
   
   //-----------------------------------------------------------------------------------------------------------------
 
-    hola();
     
     int N=10;
     float* Energy = (float*)malloc(sizeof(float)*N);
     srand((unsigned int)time(NULL));
     for(int i = 0; i<N; i++){
-      Energy[i] = (float)rand()/(float)RAND_MAX;
+      if (i == 0)
+      {
+        Energy[i] = 10.0000;
+      }
+      
+      else{
+        Energy[i] = (float)rand()/(float)RAND_MAX;
+      }
     }
     niceprint(N,Energy);
-    */
 
     time (&end);
 
