@@ -9,7 +9,7 @@
 #include <math.h>
 
 
-void extern niceprint(int N, float*Energy);
+void extern niceprint(int N, float*Energy, float max);
 
 
 
@@ -114,11 +114,12 @@ int main (int argc, char **argv) {
           break; 
         case 'D':
           printf("Hay D\n");
-          
-          for (int i = 0; i < numero_celdas; i++)
+          niceprint(numero_celdas, celdas, max);
+          /* for (int i = 0; i < numero_celdas; i++)
           {
-            printf("celda: %d -- energia: %f \n", i, celdas[i]);
-          }
+
+            //printf("celda: %d -- energia: %f \n", i, celdas[i]);
+          } */
           break;
         case '?':
 
@@ -143,8 +144,7 @@ int main (int argc, char **argv) {
   
   //-----------------------------------------------------------------------------------------------------------------
 
-    
-    int N=10;
+    /* int N=10;
     float* Energy = (float*)malloc(sizeof(float)*N);
     srand((unsigned int)time(NULL));
     for(int i = 0; i<N; i++){
@@ -157,7 +157,8 @@ int main (int argc, char **argv) {
         Energy[i] = (float)rand()/(float)RAND_MAX;
       }
     }
-    niceprint(N,Energy);
+    niceprint(N,Energy, max); */
+    
 
     time (&end);
 
