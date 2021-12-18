@@ -1,0 +1,3 @@
+lab2.o: lab2.c Funciones.h
+Funciones.o: Funciones.c Funciones.h
+bomb.o: bomb.c Funciones.h

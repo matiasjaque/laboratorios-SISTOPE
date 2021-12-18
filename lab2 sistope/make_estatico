@@ -1,0 +1,10 @@
+test: test.o Funciones.o
+	gcc -o test test.o Funciones.o -lniceprint -L .
+
+test.o: test.c
+	gcc -c test.c
+funciones.o: Funciones.c
+	gcc -c Funciones.c
+
+clean:
+	rm -f test.o funciones.o test
