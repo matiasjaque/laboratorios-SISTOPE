@@ -7,7 +7,7 @@
 #include "Funciones.h"
 #include <math.h>
 #include <sys/wait.h>
-
+#include <sys/types.h>
 
 
 
@@ -141,16 +141,30 @@ int main (int argc, char **argv) {
   // calcular cantidad de particulas por proceso
   int division = cantidadLineas/cantidad_procesos;
   int resto = cantidadLineas % cantidad_procesos;
-  for (int i = 0; i < cantidad_procesos; i++)
-  {
-    if(i < resto){
-      printf("%d:%d\n", i, division + 1);
+  for(int i=0;i<cantidad_procesos;i++) 
+    {
+        if(fork() == 0)
+        {
+          if(i < resto)
+          {
+            
+            printf("%d:%d\n", i, division + 1);
+            printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+            execl("./bomb", "./bomb",i,NULL);
+          }
+          else
+          {
+            printf("%d:%d\n", i, division);
+            printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+            execl("./bomb", "./bomb",i,NULL);
+          }
+          exit (0);
+            
+        }
     }
-    else{
-      printf("%d:%d\n", i, division);
-    }
-  }
-  
+    for(int i=0;i<cantidad_procesos;i++) 
+    wait(NULL);
+
 
   //Liberar memoria del arreglo de particulas 
   free(particulas[0]);
