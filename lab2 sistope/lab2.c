@@ -7,7 +7,12 @@
 #include "Funciones.h"
 #include <math.h>
 #include <sys/wait.h>
+<<<<<<< Updated upstream
 #include <sys/types.h>
+=======
+#include <ctype.h>
+
+>>>>>>> Stashed changes
 
 
 
