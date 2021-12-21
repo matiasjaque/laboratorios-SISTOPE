@@ -3,9 +3,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-void hola() {
-    printf("hola");
-}
 int main (int argc, char **argv){
     int c;
     int cantidad_particulas = 0;
@@ -17,17 +14,15 @@ int main (int argc, char **argv){
         {
             case 'p':
                 sscanf(optarg, "%d", &cantidad_particulas);
-                printf("particulas: %d ",cantidad_particulas);
                 break;
             case 'N':
                 sscanf(optarg, "%d", &cantidad_celdas);
-                printf("celdas: %d \n",cantidad_celdas);
                 break;
             case 'c':
                 sscanf(optarg, "%d", &cantidadLineas);
                 if(cantidadLineas == 0)
                 {
-                    printf("Error al ingresar parametro de c\n");
+                    fprintf(stderr,"Error al ingresar parametro de c\n");
                     return(1);
                 }
                 break;
@@ -50,35 +45,61 @@ int main (int argc, char **argv){
         celdas[i] = 0;
     }
     //Se crea una matriz de tamaño 2xcantidad de particulas
-    int ** particulas = (int**) malloc(sizeof(int)* 2);
+    int * particulas[2];
     particulas[0] = (int*)malloc(sizeof(int)*cantidad_particulas);
     particulas[1] = (int*)malloc(sizeof(int)*cantidad_particulas);
+    //Se llena la matriz con los datos del archivo
+    int * linea = (int*)malloc(sizeof(int)*2);
+
+    // abrir archivo
     FILE *archivo;
     archivo = fopen(nombre_archivo, "r");
-    //Se llena la matriz con los datos del archivo
-    char line[256]; /* or other suitable maximum line size */
-    int count = 0;
-    int particula = 0 ;
-    int * caca = (int*)malloc(sizeof(int)*2);
-    for (int i = 0; i < posicion + cantidad_particulas; i++)
-    {
-        if( i > posicion - 1 )
-        {
-            fscanf(archivo, "%d %d", &particulas[0][i], &particulas[1][i]);
-            printf("real: %d %d\n",particulas[0][i], particulas[1][i]);
+    // leer hasta el final
+    int lin = 0;
+    int pp = 0;
+    while ( fscanf(archivo, "%d %d", &linea[0], &linea[1]) != EOF ) {
+        
+        // sino si ya pase las lineas que me interesan salgo
+        if ( lin >= posicion + cantidad_particulas ) {
+            break;
         }
-        else
+        
+        // si estoy en la lineas que me interesan
+        if( lin > posicion - 1 )
         {
-            fscanf(archivo, "%d %d", &caca[0], &caca[1]);
-            printf("caca: %d %d\n", caca[0], caca[1]);
+            // lleno particulas
+            printf("lei %d: %d %d \n", pp, linea[0], linea[1]);
+            particulas[0][pp] = linea[0];
+            particulas[1][pp] = linea[1];
+            pp++;
         }
+        lin++;
+    }
 
-    }
-    for (int i = 0; i < cantidad_particulas; i++)
-    {
-        printf("oficial: %d %d\n",particulas[0][i], particulas[1][i]);
-    }
-    
+    // Validar que pp es 1 o mas
+    free(linea);
+    // cierro el archivo 
     fclose(archivo);
-    return 0;
+
+
+
+    // Ejecutar funcion
+  /*   calcular_impactos(celdas, particulas, cantidad_celdas, cantidad_particulas);
+
+    for (int i = 0; i < cantidad_celdas; i++)
+    {
+       fprintf(stdout,"%d %f\n", i,celdas[i]+100);   
+    } */
+
+    // Escribir resultados
+
+    //Liberar memoria del arreglo de particulas 
+    free(particulas[0]);
+    free(particulas[1]);
+
+    close(stdout);
+
+    fprintf(stdout,"TERMINE\n");
+  
+    exit(0);
 }
