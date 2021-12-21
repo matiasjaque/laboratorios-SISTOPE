@@ -8,6 +8,8 @@
 #include <math.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#define LECTURA 0
+#define ESCRITURA 1
 
 
 
@@ -119,7 +121,7 @@ int main (int argc, char **argv) {
   //Se crea un arreglo de tamaño la cantidad de celdas
   float * celdas = (float *)malloc(sizeof(float)*numero_celdas);
 
-  //Se libera la memoria del arreglo
+  //Se inicia el arreglo en 0
   for (size_t i = 0; i < numero_celdas; i++)
   {
     celdas[i] = 0;
@@ -141,29 +143,81 @@ int main (int argc, char **argv) {
   // calcular cantidad de particulas por proceso
   int division = cantidadLineas/cantidad_procesos;
   int resto = cantidadLineas % cantidad_procesos;
-  for(int i=0;i<cantidad_procesos;i++) 
+  //cantidad de celdas para los hijos
+  int length = (int) (log10(numero_celdas) + 2);
+  char* strCantidadCeldas = malloc( length + 1 );
+  snprintf(strCantidadCeldas,length, "%d", numero_celdas);
+  //cantidad lineas para los hijos
+  length = (int) (log10(cantidadLineas) + 2);
+  char* strCantidadLineas = malloc( length + 1 );
+  snprintf(strCantidadLineas,length, "%d",  cantidadLineas);
+  //tamaño cantidad de procesos
+  int tamanoProcesos = (int) (log10(cantidadLineas) + 2);
+  int linea = 0;
+for(int i=0;i<cantidad_procesos;i++) 
     {
-        if(fork() == 0)
+      if (i < resto + 1 && i > 0)
+      {
+        linea = linea + division + 1;
+      }
+      else if (i > 0 )
+      {
+        linea = linea + division;
+      }
+      int pipedf[2];
+      int pipefd[2];
+      char buffer[10000];
+      pipe(pipedf);
+      pipe(pipefd);
+      int status;
+      int pid;
+      pid = fork();
+      if (pid == 0)
+      {
+        if (i<resto)
         {
-          if(i < resto)
-          {
-            
-            printf("%d:%d\n", i, division + 1);
-            printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
-            execl("./bomb", "./bomb",i,NULL);
-          }
-          else
-          {
-            printf("%d:%d\n", i, division);
-            printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
-            execl("./bomb", "./bomb",i,NULL);
-          }
-          exit (0);
-            
+          length = (int) (log10(division +1 ) + 2);
+          char* str = malloc( length + 1 );
+          snprintf(str,length, "%d", division + 1);
+          
+          close(pipedf[ESCRITURA]);
+          dup2(pipedf[LECTURA],STDIN_FILENO);
+          dup2(pipefd[ESCRITURA],STDOUT_FILENO);
+          close(pipefd[LECTURA]);
+          //pasamos la cantidad de particulas y la cantidad de celdas a los hijos
+          execl("./bomb", "./bomb","-p", str,"-N",strCantidadCeldas, "-c",strCantidadLineas,"-i", nombre_archivo,NULL);
+          perror("exec ls failed");
+          exit(EXIT_FAILURE);
         }
+        else
+        {
+          length = (int) (log10(division) + 2);
+          char* str2 = malloc( length + 1 );
+          snprintf(str2,length, "%d", division);
+          close(pipedf[ESCRITURA]);
+          dup2(pipedf[LECTURA],STDIN_FILENO);
+          dup2(pipefd[ESCRITURA],STDOUT_FILENO);
+          close(pipefd[LECTURA]);
+          execl("./bomb", "./bomb","-p", str2,"-N",strCantidadCeldas, "-c",strCantidadLineas,"-i", nombre_archivo,NULL);
+          perror("exec ls failed");
+          exit(EXIT_FAILURE);
+        }
+        
+      }
+      else
+        {
+            close(pipedf[LECTURA]);
+            char* strI = malloc( tamanoProcesos + 1 );
+            snprintf(strI,tamanoProcesos,"%d", linea);
+            write(pipedf[ESCRITURA],strI,tamanoProcesos);
+            wait(&status);
+            read(pipefd[LECTURA], buffer, 100); //leemos el pipe y lo imprimimos
+            printf("Hijo dice: %si: %d\n",buffer,i);
+        }
+
     }
-    for(int i=0;i<cantidad_procesos;i++) 
-    wait(NULL);
+    /* for(int i=0;i<cantidad_procesos;i++) 
+    wait(NULL);  */
 
 
   //Liberar memoria del arreglo de particulas 
