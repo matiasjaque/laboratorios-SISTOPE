@@ -136,7 +136,7 @@ int main (int argc, char **argv) {
     time (&end);
 
     double dif = difftime (end,start);
-    printf ("El tiempo de ejecucion es %.2lf segundos.\n", dif );
+    printf ("El tiempo de ejecucion es %f segundos.\n", dif );
 
     return 0;
 }

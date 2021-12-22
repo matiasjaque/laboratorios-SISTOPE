@@ -1,24 +1,20 @@
 CC= gcc
 CFLAGS= -Wall -lm -lniceprint -L .
-out = lab2
-source = lab2.c Funciones.c 
-objects = $(source:.c=.o)
-depends = .depends
-headers = Funciones.h
+.DEFAULT_GOAL = build
 
-$(build): $(out)
-$(out): $(objects)
-	$(CC) -o $@ $^ $(CFLAGS)
+build: lab2 bomb
 
-$(objects): 
-	$(CC) -c $*.c
+lab2: lab2.c
+	$(CC) -o lab2 lab2.c $(CFLAGS)
 
-$(depends): $(source) $(headers)
-	@$(CC) -MM $(source) > $@
-	$(CC) -o bomb bomb.c
+bomb: bomb.c Funciones.h Funciones.o
+	$(CC) -o bomb bomb.c Funciones.o $(CFLAGS)
+
+Funciones.o: Funciones.c
+	$(CC) -c Funciones.c $(CFLAGS)
 
 clean:
-	$(RM) $(out) $(objects) $(depends)
+	$(RM) lab2 lab2.o bomb bomb.o Funciones.o  
 
 .PHONY: clean
-sinclude $(depends)
+#sinclude $(depends)
