@@ -169,7 +169,6 @@ int main (int argc, char **argv) {
       //Pipe de escritura hijo lectura padre
       int pipefd[2];
       pipe(pipefd);
-      int status;
       int pid;
       pid = fork();
       
@@ -212,8 +211,6 @@ int main (int argc, char **argv) {
       //Guardar los procesos como string
       char* strI = malloc( tamanoProcesos + 1 );
       snprintf(strI,tamanoProcesos,"%d", linea);
-      printf("hola %d\n",linea);
-
       //Escribir el tamaño de los procesos al hijo
       write(pipedf[ESCRITURA],strI,tamanoProcesos);
       close(pipedf[ESCRITURA]);
@@ -228,12 +225,10 @@ int main (int argc, char **argv) {
       salidas[i] = salidaHijo;
     }
 
-    int status;
     //Sumar todas las salidas
     for(int i=0;i<cantidad_procesos;i++)
     {
-      //Esperar al hijo
-      //wait(&status);
+
       float f; int pp;
       //Leer la posicion y el valor que retorna el hijo
       while ( 1 == 1 ) {
@@ -272,6 +267,7 @@ int main (int argc, char **argv) {
   fclose(archivo_salida);
   if(imprimir == 1)
   {
+
     niceprint(numero_celdas, celdas, max);
     free(celdas);
   }

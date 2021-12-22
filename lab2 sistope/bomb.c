@@ -68,7 +68,6 @@ int main (int argc, char **argv){
         if( lin > posicion - 1 )
         {
             // lleno particulas
-            printf("lei %d: %d %d \n", pp, linea[0], linea[1]);
             particulas[0][pp] = linea[0];
             particulas[1][pp] = linea[1];
             pp++;
@@ -84,12 +83,12 @@ int main (int argc, char **argv){
 
 
     // Ejecutar funcion
-  /*   calcular_impactos(celdas, particulas, cantidad_celdas, cantidad_particulas);
+    calcular_impactos(celdas, particulas, cantidad_celdas, cantidad_particulas);
 
     for (int i = 0; i < cantidad_celdas; i++)
     {
-       fprintf(stdout,"%d %f\n", i,celdas[i]+100);   
-    } */
+       fprintf(stdout,"%d %f\n", i,celdas[i]);   
+    }
 
     // Escribir resultados
 
