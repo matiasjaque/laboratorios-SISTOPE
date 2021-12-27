@@ -7,17 +7,12 @@
 #include "Funciones.h"
 #include <math.h>
 #include <sys/wait.h>
-<<<<<<< Updated upstream
 #include <sys/types.h>
-<<<<<<< HEAD
-=======
 #include <ctype.h>
 
->>>>>>> Stashed changes
-=======
 #define LECTURA 0
 #define ESCRITURA 1
->>>>>>> main
+
 
 
 
@@ -35,8 +30,6 @@
 
 int main (int argc, char **argv) {
   clock_t inicio = clock();
-
-  
 
   int numero_celdas = 0;
   char *nombre_archivo = NULL;
@@ -102,8 +95,6 @@ int main (int argc, char **argv) {
                     optopt);
           return 1;
           
-
-        
         default:
         abort ();
       }
@@ -126,7 +117,8 @@ int main (int argc, char **argv) {
     printf("Error al abrir el archivo de salida.\n");
     exit(1);
   }
-  //Se crea un arreglo de tamaño la cantidad de celdas
+
+  //Se crea un arreglo del tamaño correspondiente a la cantidad de celdas
   float * celdas = (float *)malloc(sizeof(float)*numero_celdas);
 
   //Se inicia el arreglo en 0
@@ -135,21 +127,24 @@ int main (int argc, char **argv) {
     celdas[i] = 0;
   }
 
-
   // calcular cantidad de particulas por proceso
   int division = cantidadLineas/cantidad_procesos;
   int resto = cantidadLineas % cantidad_procesos;
+
   //cantidad de celdas para los hijos
   int length = (int) (log10(numero_celdas) + 2);
   char* strCantidadCeldas = malloc( length + 1 );
   snprintf(strCantidadCeldas,length, "%d", numero_celdas);
+
   //cantidad lineas para los hijos
   length = (int) (log10(cantidadLineas) + 2);
   char* strCantidadLineas = malloc( length + 1 );
   snprintf(strCantidadLineas,length, "%d",  cantidadLineas);
+
   //tamaño cantidad de procesos
   int tamanoProcesos = (int) (log10(cantidadLineas) + 2);
   int linea = 0;
+
   //Crear un arreglo de pipes para guardar las salidas
   FILE ** salidas = (FILE**)malloc(sizeof(FILE*)*cantidad_procesos);
   for(int i=0;i<cantidad_procesos;i++) 
@@ -166,6 +161,7 @@ int main (int argc, char **argv) {
       //Pipe de lectura hijo escritura padre
       int pipedf[2];
       pipe(pipedf);
+
       //Pipe de escritura hijo lectura padre
       int pipefd[2];
       pipe(pipefd);
@@ -182,14 +178,19 @@ int main (int argc, char **argv) {
         //Calcular el largo de la division
         length = (int) (log10(division +1 ) + 2);
         char* str = malloc( length + 1 );
+
         //Cerrar la escritura del hijo en el pipe de solo lectura hijo
         close(pipedf[ESCRITURA]);
+
         //Cambiar la entrada standar por la lectura del pipe de lectura hijo
         dup2(pipedf[LECTURA],STDIN_FILENO);
+
         //Cambiar la salida estandar por la salida del pipe de escritura hijo
         dup2(pipefd[ESCRITURA],STDOUT_FILENO);
+
         //Cerrar la lectura del pipe de solo escritura hijo
         close(pipefd[LECTURA]);
+
         if (i<resto) //Si el i es < al resto de la division 
         {
           //Convertimos la division + 1 a string
@@ -206,11 +207,14 @@ int main (int argc, char **argv) {
           exit(EXIT_FAILURE);
         
       }
+
       //Cerrar la lectura del pipe de lectura hijo padre escribe
       close(pipedf[LECTURA]);
+
       //Guardar los procesos como string
       char* strI = malloc( tamanoProcesos + 1 );
       snprintf(strI,tamanoProcesos,"%d", linea);
+
       //Escribir el tamaño de los procesos al hijo
       write(pipedf[ESCRITURA],strI,tamanoProcesos);
       close(pipedf[ESCRITURA]);
@@ -221,6 +225,7 @@ int main (int argc, char **argv) {
         perror("Failed to open streams");
         exit(EXIT_FAILURE);
       }
+
       //Guardar el archivo de salida en el arreglo de salidas
       salidas[i] = salidaHijo;
     }
@@ -228,7 +233,6 @@ int main (int argc, char **argv) {
     //Sumar todas las salidas
     for(int i=0;i<cantidad_procesos;i++)
     {
-
       float f; int pp;
       //Leer la posicion y el valor que retorna el hijo
       while ( 1 == 1 ) {
@@ -237,10 +241,8 @@ int main (int argc, char **argv) {
         
         //Se guarda en el arreglo de celdas
         celdas[pp] = f + celdas[pp];
-        //printf("Hijo dice %i: %d %f\n",i , pp, f);
       }
     }
-
 
   //Encontrar el mayor 
   float max = 0;
@@ -264,6 +266,7 @@ int main (int argc, char **argv) {
       fprintf(archivo_salida, "%d %f\n", i, celdas[i]);
     }        
   }
+  // cerrar el archivo de salida
   fclose(archivo_salida);
   if(imprimir == 1)
   {
@@ -272,7 +275,7 @@ int main (int argc, char **argv) {
     free(celdas);
   }
           
-          
+    // funcion que calcula el tiempo de ejecucion del programa
     clock_t fin = clock();
 
     double tiempo = (double)(fin - inicio)/CLOCKS_PER_SEC;

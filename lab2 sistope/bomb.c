@@ -44,16 +44,19 @@ int main (int argc, char **argv){
     {
         celdas[i] = 0;
     }
+
     //Se crea una matriz de tamaño 2xcantidad de particulas
     int * particulas[2];
     particulas[0] = (int*)malloc(sizeof(int)*cantidad_particulas);
     particulas[1] = (int*)malloc(sizeof(int)*cantidad_particulas);
+
     //Se llena la matriz con los datos del archivo
     int * linea = (int*)malloc(sizeof(int)*2);
 
     // abrir archivo
     FILE *archivo;
     archivo = fopen(nombre_archivo, "r");
+
     // leer hasta el final
     int lin = 0;
     int pp = 0;
@@ -77,20 +80,19 @@ int main (int argc, char **argv){
 
     // Validar que pp es 1 o mas
     free(linea);
+
     // cierro el archivo 
     fclose(archivo);
 
-
-
-    // Ejecutar funcion
+    // Ejecutar funcion calcular_impactos
     calcular_impactos(celdas, particulas, cantidad_celdas, cantidad_particulas);
 
+    // Escribir el archivo
     for (int i = 0; i < cantidad_celdas; i++)
     {
        fprintf(stdout,"%d %f\n", i,celdas[i]);   
     }
 
-    // Escribir resultados
 
     //Liberar memoria del arreglo de particulas 
     free(particulas[0]);
